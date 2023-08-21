@@ -6,7 +6,7 @@ max_epochs = 300
 # backbone
 custom_imports = dict(imports=['mmpretrain.models'], allow_failed_imports=False)
 # pretrained = '/nfs/home/3002_hehui/xmx/pretrain/sam/sam_vit_h_4b8939.pth'
-pretrained ='https://download.openmmlab.com/mmclassification/v1/vit_sam/vit-huge-p16_sam-pre_3rdparty_sa1b-1024px_20230411-3f13c653.pth'
+pretrained ='https://download.openmmlab.com/mmpretrain/v1.0/dinov2/vit-base-p14_dinov2-pre_3rdparty_20230426-ba246503.pth'
 
 
 model = dict(
@@ -18,28 +18,42 @@ model = dict(
         bgr_to_rgb=True,
         pad_mask=True,
         pad_size_divisor=32),
+    # backbone=dict(
+    #     type='mmpretrain.ViTSAM',
+    #     arch='huge',
+    #     img_size=1024,
+    #     patch_size=16,
+    #     out_channels=256,
+    #     use_abs_pos=True,
+    #     use_rel_pos=True,
+    #     window_size=14,
+    #     # num_stages=4,
+    #     out_indices=(0, 1, 2, 3),
+    #     init_cfg=dict(
+    #         type='Pretrained',
+    #         checkpoint=pretrained,
+    #         prefix='backbone.',
+    #     )
+    # ),
     backbone=dict(
-        type='mmpretrain.ViTSAM',
-        arch='huge',
+        type='mmpretrain.VisionTransformer',
+        arch='base',
+        # out_indices=(0, 1, 2, 3),
         img_size=1024,
         patch_size=16,
-        out_channels=256,
-        use_abs_pos=True,
-        use_rel_pos=True,
-        window_size=14,
-        # num_stages=4,
-        out_indices=(0, 1, 2, 3),
+        layer_scale_init_value=1e-5,
         init_cfg=dict(
             type='Pretrained',
             checkpoint=pretrained,
             prefix='backbone.',
         )
     ),
+
     neck=dict(
         type='FPN',
         # in_channels=[256, 512, 1024, 2048],
-        # in_channels=[256],
-        in_channels=[256, 256, 256, 256],
+        in_channels=[256],
+        # in_channels=[256, 256, 256, 256],
         out_channels=256,
         num_outs=5),
     rpn_head=dict(
