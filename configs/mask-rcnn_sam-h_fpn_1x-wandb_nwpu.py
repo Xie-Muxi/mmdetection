@@ -61,7 +61,7 @@ model = dict(
     neck=dict(
         type='FPN',
         # in_channels=[256, 512, 1024, 2048],
-        in_channels=[256],
+        in_channels=[256, 256, 256, 256],
         out_channels=256,
         num_outs=5),
     rpn_head=dict(
@@ -343,3 +343,5 @@ resume = False
 
 # train_cfg = dict(val_interval=2)
 # _base_.train_cfg.val_interval = 2
+
+find_unused_parameters = True
