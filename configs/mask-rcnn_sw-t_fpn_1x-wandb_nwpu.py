@@ -1,14 +1,9 @@
 
-# runtime settings
-max_epochs = 300
-
-# model settings
-# backbone
 custom_imports = dict(imports=['mmpretrain.models'], allow_failed_imports=False)
-# pretrained = '/nfs/home/3002_hehui/xmx/pretrain/sam/sam_vit_h_4b8939.pth'
-pretrained ='https://download.openmmlab.com/mmclassification/v1/vit_sam/vit-huge-p16_sam-pre_3rdparty_sa1b-1024px_20230411-3f13c653.pth'
+pretrained = 'https://github.com/SwinTransformer/storage/releases/download/v1.0.0/swin_tiny_patch4_window7_224.pth'  # noqa
 
-
+# ----- mask-rcnn_r50_fpn.py ------
+# model settings
 model = dict(
     type='MaskRCNN',
     data_preprocessor=dict(
@@ -18,28 +13,48 @@ model = dict(
         bgr_to_rgb=True,
         pad_mask=True,
         pad_size_divisor=32),
+
+    # backbone=dict(
+    #     type='ResNet',
+    #     depth=50,
+    #     num_stages=4,
+    #     out_indices=(0, 1, 2, 3),
+    #     frozen_stages=1,
+    #     norm_cfg=dict(type='BN', requires_grad=True),
+    #     norm_eval=True,
+    #     style='pytorch',
+    #     init_cfg=dict(type='Pretrained', checkpoint='torchvision://resnet50')),
+    # backbone=dict(
+    #     # _delete_=True, # 将 _base_ 中关于 backbone 的字段删除
+    #     type='mmpretrain.MobileNetV3', # 使用 mmpretrain 中的 MobileNetV3
+    #     arch='small',
+    #     out_indices=(0, 1, 2, 3), # 修改 out_indices
+    #     init_cfg=dict(
+    #         type='Pretrained',
+    #         checkpoint=pretrained,
+    #         prefix='backbone.')),
+
     backbone=dict(
-        type='mmpretrain.ViTSAM',
-        arch='huge',
-        img_size=1024,
-        patch_size=16,
-        out_channels=256,
-        use_abs_pos=True,
-        use_rel_pos=True,
-        window_size=14,
-        # num_stages=4,
+        # _delete_=True,
+        type='SwinTransformer',
+        embed_dims=96,
+        depths=[2, 2, 6, 2],
+        num_heads=[3, 6, 12, 24],
+        window_size=7,
+        mlp_ratio=4,
+        qkv_bias=True,
+        qk_scale=None,
+        drop_rate=0.,
+        attn_drop_rate=0.,
+        drop_path_rate=0.2,
+        patch_norm=True,
         out_indices=(0, 1, 2, 3),
-        init_cfg=dict(
-            type='Pretrained',
-            checkpoint=pretrained,
-            prefix='backbone.',
-        )
-    ),
+        with_cp=False,
+        convert_weights=True,
+        init_cfg=dict(type='Pretrained', checkpoint=pretrained)),
     neck=dict(
         type='FPN',
-        # in_channels=[256, 512, 1024, 2048],
-        # in_channels=[256],
-        in_channels=[256, 256, 256, 256],
+        in_channels=[96, 192, 384, 768],
         out_channels=256,
         num_outs=5),
     rpn_head=dict(
@@ -200,8 +215,7 @@ train_dataloader = dict(
         data_prefix=dict(img='positive image set'),
         filter_cfg=dict(filter_empty_gt=True, min_size=32),
         pipeline=train_pipeline,
-        backend_args=backend_args)
-)
+        backend_args=backend_args))
 
 
 # val_dataloader = dict(
@@ -220,7 +234,7 @@ train_dataloader = dict(
 #         backend_args=backend_args))
 
 val_dataloader = dict(
-    batch_size=1,
+    batch_size=2,
     num_workers=2,
     persistent_workers=True,
     drop_last=False,
@@ -250,7 +264,7 @@ test_evaluator = val_evaluator
 
 # ----- schedule_1x.py -----
 # training schedule for 1x
-train_cfg = dict(type='EpochBasedTrainLoop', max_epochs=max_epochs, val_interval=2)
+train_cfg = dict(type='EpochBasedTrainLoop', max_epochs=12, val_interval=2)
 val_cfg = dict(type='ValLoop')
 test_cfg = dict(type='TestLoop')
 
@@ -321,7 +335,3 @@ resume = False
 
 # train_cfg = dict(val_interval=2)
 # _base_.train_cfg.val_interval = 2
-
-
-# optimizer_config=dict(find_unused_parameters = True)
-find_unused_parameters = True
