@@ -1,3 +1,4 @@
+max_epochs = 300
 
 # ----- mask-rcnn_r50_fpn.py ------
 # model settings
@@ -271,7 +272,7 @@ test_evaluator = val_evaluator
 
 # ----- schedule_1x.py -----
 # training schedule for 1x
-train_cfg = dict(type='EpochBasedTrainLoop', max_epochs=12, val_interval=2)
+train_cfg = dict(type='EpochBasedTrainLoop', max_epochs=max_epochs, val_interval=2)
 val_cfg = dict(type='ValLoop')
 test_cfg = dict(type='TestLoop')
 
