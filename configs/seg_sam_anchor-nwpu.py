@@ -248,13 +248,9 @@ logger = dict(
     name=exp_name
 )
 
-# vis_backends = [dict(type='LocalVisBackend'), dict(type='WandBVisBackend')]
-# visualizer = dict(vis_backends=vis_backends)
-
-# visualizer = dict(type='Visualizer', vis_backends=[dict(type='WandbVisBackend')])
-
-# log_processor = dict(type='LogProcessor', window_size=50, by_epoch=True)
-# log_processor = dict(window_size=50, by_epoch=True, custom_cfg=None, num_digits=4)
+vis_backends = [dict(type='LocalVisBackend'), dict(type='WandbVisBackend',init_kwargs=dict(name='seg_sam_anchor-nwpu'))]
+visualizer = dict(
+    type='DetLocalVisualizer', vis_backends=vis_backends, name='visualizer')
 log_processor = dict(type='LogProcessor', window_size=50, by_epoch=True)
 
 callbacks = [
