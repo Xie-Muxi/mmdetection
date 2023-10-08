@@ -11,12 +11,12 @@ from mmdet.registry import MODELS
 from mmdet.structures import SampleList
 from mmdet.structures.mask import mask2bbox
 from mmdet.utils import OptConfigType, OptMultiConfig
-from .base_panoptic_fusion_head import BasePanopticFusionHead
+from mmdet.models.seg_heads import BasePanopticFusionHead
 
 
 @MODELS.register_module()
-class MaskFormerFusionHead(BasePanopticFusionHead):
-    """MaskFormer fusion head which postprocesses results for panoptic
+class OnekFormerFusionHead(BasePanopticFusionHead):
+    """OneFormer fusion head which postprocesses results for panoptic
     segmentation, instance segmentation and semantic segmentation."""
 
     def __init__(
