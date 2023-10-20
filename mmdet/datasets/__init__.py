@@ -30,6 +30,7 @@ from .xml_style import XMLDataset
 from .youtube_vis_dataset import YouTubeVISDataset
 
 from .nwpu import NWPUInsSegDataset
+from .whu_building import WhuBuildingDataset
 
 __all__ = [
     'XMLDataset', 'CocoDataset', 'DeepFashionDataset', 'VOCDataset',
